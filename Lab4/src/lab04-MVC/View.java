@@ -8,32 +8,38 @@
  * load images for all direction (an image should only be loaded once!!! why?)
  **/
 
-import java.util.*;
-import javax.imageio.ImageIO;
-import java.io.IOException;
-import javax.swing.JFrame;
-import javax.swing.JPanel;
-import java.io.File;
 import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
+
+import javax.imageio.ImageIO;
+import javax.swing.JFrame;
+import javax.swing.JPanel;
 
 public class View extends JPanel {
 	BufferedImage[][] pics;
-	private int xloc;
-	private int yloc;
+	private int xloc = 0;
+	private int yloc = 0;
+	int xIncr;
+	int yIncr;
 	private boolean north;
 	private boolean south;
 	private boolean east;
 	private boolean west;
-	private int picNum = 0;
-	private int orcImageNum = 0;
+	private static int picNum = 0;
+	private static int frameNum = 0;
 	final int frameCount = 10;
-	private final static int frameWidth = 500;
-	private final static int frameHeight = 300;
+	public Controller controller;
+	int loc = 0;
+    private final static int frameW = 500;
+	private final static int frameH = 300;
 	private final static int imageWidth = 165;
 	private final static int imageHeight = 165;
 	
+	public static JFrame frame;
+
 	public int getImageHeight() {
 		return imageHeight;
 	}
@@ -42,140 +48,61 @@ public class View extends JPanel {
 		return imageWidth;
 	}
 	
-	public static int getFrameWidth() {
-		return frameWidth;
+	public int getHeight() {
+		return frameH;
 	}
 	
-	public static int getFrameHeight() {
-		return frameHeight;
+	public int getWidth() {
+		return frameW;
 	}
 	
-	/*public static void animation() {
-    	JFrame frame = new JFrame();
-    	frame.getContentPane().add(new View());
+	
+	public void update(int x1, int y1, int newLoc) {
+		// TODO Auto-generated method stub
+        frame = new JFrame();
+    	frame.getContentPane().add(this);
     	frame.setBackground(Color.gray);
     	frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-    	frame.setSize(frameWidth, frameHeight);
+    	frame.setSize(frameW, frameH);
     	frame.setVisible(true);
-    	for(int i = 0; i < 1000; i++){
-    		frame.repaint();
-    		try {
-    			Thread.sleep(100);
-    		} catch (InterruptedException e) {
-    			e.printStackTrace();
-    		}
-    	}
-    }*/
-	
-	public View() {
-		final BufferedImage[] imgs = {
-				Images.orcForwardN.getImage(),
-				Images.orcForwardS.getImage(),
-				Images.orcForwardE.getImage(),
-				Images.orcForwardW.getImage(),
-				Images.orcForwardNE.getImage(),
-				Images.orcForwardNW.getImage(),
-				Images.orcForwardSE.getImage(),
-				Images.orcForwardSW.getImage();
-		}
-		
+    	
+    	xloc = x1;
+    	yloc = y1;
+    	loc  = newLoc;
+    	frame.repaint();
+    	try {
+   			Thread.sleep(100);
+   		} catch (InterruptedException e) {
+   			e.printStackTrace();
+   		}
+	}
+
+	public View() {		
 		pics = new BufferedImage[8][frameCount];
 		
 		for (int j = 0; j < 8; j++) {
+			BufferedImage image = createImage(j);
+			pics[j] = new BufferedImage[frameCount];
 			for (int i = 0; i < frameCount; i++) {
-				pics[j][i] = imgs[j].getSubimage(imageWidth*i, 0, imageWidth, imageHeight);
+				pics[j][i] = image.getSubimage(imageWidth*i, 0, imageWidth, imageHeight);
 			}
 		}
 	}
 	
-	public void update(int x, int y, boolean[] direct) {
-		xloc = x;
-		yloc = y;
-		north = direct[0];
-		south = direct[1];
-		east = direct[2];
-		west = direct[3];
-	}
-	
 	public void paint(Graphics g) {
 		picNum = (picNum + 1) % frameCount;
-		/*if(xloc+xIncr+155>frameWidth){
-    		if(yloc+imageHeight+yIncr>frameHeight)
-    			g.drawImage(pics[7][picNum], moveWest, yloc, Color.gray, this);
-    		else
-    			g.drawImage(pics[4][picNum], xloc, moveSouth, Color.gray, this);
-    	}
-    	else if(yloc+imageHeight+yIncr>frameHeight){
-    		if(xloc<-50)
-    			g.drawImage(pics[1][picNum], xloc, moveNorth, Color.gray, this);
-    		else
-    			g.drawImage(pics[7][picNum], moveWest, yloc, Color.gray, this);
-    	}
-    	else if(xloc<-50)
-    		if(yloc<-30)
-    			g.drawImage(pics[0][picNum], moveEast, yloc, Color.gray, this);
-    		else
-    			g.drawImage(pics[1][picNum], xloc, moveNorth, Color.gray, this);
-    	else
-        	g.drawImage(pics[0][picNum], moveEast, yloc, Color.gray, this);*/
-		if (north) {
-			orcImageNum = 0;
-		}
-		if (south) {
-			orcImageNum = 1;
-		}
-		if (east) {
-			orcImageNum = 2;
-		}
-		if (west) {
-			orcImageNum = 3;
-		}
-		if (north && east) {
-			orcImageNum = 4;
-		}
-		if (north && west) {
-			orcImageNum = 5;
-		}
-		if (south && east) {
-			orcImageNum = 6;
-		}
-		if (south && west) {
-			orcImageNum = 7;
-		}
-		g.drawImage(pics[orcImageNum][picNum], xloc, yloc, Color.gray, this);
+		g.drawImage(pics[loc][picNum], xloc += xIncr, yloc += yIncr, Color.gray, this);
 	}
-	
-	public enum Images {
-		orcForwardN("src/pics/orc_forward_north.png"),
-		orcForwardS("src/pics/orc_forward_south.png"),
-		orcForwardE("src/pics/orc_forward_east.png"),
-		orcForwardW("src/pics/orc_forward_west.png"),
-		orcForwardNE("src/pics/orc_forward_northeast.png"),
-		orcForwardNW("src/pics/orc_forward_northwest.png"),
-		orcForwardSE("src/pics/orc_forward_southeast.png"),
-		orcForwardSW("src/pics/orc_forward_southwest.png");
-						
-		private BufferedImage img;
-		
-		Images(String dir) {
-			img = createImage(dir);
-		}
-		
-		public BufferedImage getImage() {
-			return img;
-		}
-	}
-	private static BufferedImage createImage(String dir) {
-		//final File imgFile = new File(dir);
+	BufferedImage createImage(int j) {
 		BufferedImage bufferedImage;
 		try {
-			bufferedImage = ImageIO.read(new File("images/orc/orc_forward_"+dir+".png"));
+			bufferedImage = ImageIO.read(new File("pics/orc_forward_"+j+".png));"));
 			return bufferedImage;
 		}
 		catch (IOException e) {
 			e.printStackTrace();
 		}
 		return null;
-	}
+	}	
+	
 }
-
