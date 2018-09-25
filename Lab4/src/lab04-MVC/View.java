@@ -69,14 +69,14 @@ public class View extends JPanel {
 	
 	public View() {
 		final BufferedImage[] imgs = {
-				/*Images.ORC_FW_N.getImage(),
-				Images.ORC_FW_NE.getImage(),
-				Images.ORC_FW_NW.getImage(),
-				Images.ORC_FW_S.getImage(),
-				Images.ORC_FW_SE.getImage(),
-				Images.ORC_FW_SW.getImage(),
-				Images.ORC_FW_E.getImage(),
-				Images.ORC_FW_W.getImage();*/
+				Images.orcForwardN.getImage(),
+				Images.orcForwardS.getImage(),
+				Images.orcForwardE.getImage(),
+				Images.orcForwardW.getImage(),
+				Images.orcForwardNE.getImage(),
+				Images.orcForwardNW.getImage(),
+				Images.orcForwardSE.getImage(),
+				Images.orcForwardSW.getImage();
 		}
 		
 		pics = new BufferedImage[8][frameCount];
@@ -146,7 +146,15 @@ public class View extends JPanel {
 	}
 	
 	public enum Images {
-		
+		orcForwardN("src/pics/orc_forward_north.png"),
+		orcForwardS("src/pics/orc_forward_south.png"),
+		orcForwardE("src/pics/orc_forward_east.png"),
+		orcForwardW("src/pics/orc_forward_west.png"),
+		orcForwardNE("src/pics/orc_forward_northeast.png"),
+		orcForwardNW("src/pics/orc_forward_northwest.png"),
+		orcForwardSE("src/pics/orc_forward_southeast.png"),
+		orcForwardSW("src/pics/orc_forward_southwest.png");
+						
 		private BufferedImage img;
 		
 		Images(String dir) {
